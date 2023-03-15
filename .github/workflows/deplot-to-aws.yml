@@ -1,1 +1,33 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
 
+jobs:
+  aws-cdk:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-access-key-id: ${{secrets.ACCESS_KEY}}
+          aws-secret-access-key: ${{secrets.SECRET_ACCESS_KEY}}
+          aws-region: eu-west-2
+      - name: install npm
+        run: |
+          npm install
+      - name: Install cdk
+        run: |
+          npm install -g aws-cdk
+      - name: Synth cdk
+        run: |
+          cdk synth
+      - name: Deploy cdk
+        run: |
+          cdk deploy
