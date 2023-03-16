@@ -8,15 +8,15 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as apigate from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 
-export interface ProductManagementProps {
+export interface ProductImagesProps {
     bucket: s3.Bucket
 }
 
-export class ProductManagementConstruct extends Construct {
+export class ProductImagesConstruct extends Construct {
 
   public readonly httpApi: apigate.HttpApi;
     
-  constructor(scope: Construct, id: string, props: ProductManagementProps) {
+  constructor(scope: Construct, id: string, props: ProductImagesProps) {
       super(scope, id);
 
     const getProductImages = new lambda.NodejsFunction(this, "GetProductImages", {

@@ -3,7 +3,8 @@ import { Construct } from 'constructs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import * as s3Deploy from 'aws-cdk-lib/aws-s3-deployment';
 import path from 'path';
-import { ProductManagementConstruct } from './imagesApi';
+import { ProductImagesConstruct } from './imagesApi';
+import { ProductDatabaseConstruct } from './databaseApi';
 
 export class ProductManagementStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -32,10 +33,14 @@ export class ProductManagementStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'Product-Image-Bucket-Name', {
       value: productsImagesBucket.bucketName,
       exportName: 'Product-Image-Bucket-Name'
-    })
+    });
 
-    const api = new ProductManagementConstruct(this, 'ProductManagementAPI', {
+    const images = new ProductImagesConstruct(this, 'ProductManagementAPI', {
       bucket: productsImagesBucket
-    })
+    });
+    cdk.Tags.of(images).add('Module', 'Images')
+
+    const database = new ProductDatabaseConstruct(this, 'ProductDatabaseAPI');
+    cdk.Tags.of(database).add('Module', 'Database');
   }
 }

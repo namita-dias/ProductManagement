@@ -7,7 +7,7 @@ export interface ProductDatabaseProps {
 }
 
 export class ProductDatabaseConstruct extends Construct {
-  constructor(scope: Construct, id: string, props: ProductDatabaseProps) {
+  constructor(scope: Construct, id: string, props?: ProductDatabaseProps) {
     super(scope, id);
 
       const productTable = new dynamo.Table(this, 'Product', {
