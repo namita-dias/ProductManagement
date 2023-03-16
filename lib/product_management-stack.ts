@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import * as s3Deploy from 'aws-cdk-lib/aws-s3-deployment';
 import path from 'path';
-import { ProductManagementConstruct } from './api';
+import { ProductManagementConstruct } from './imagesApi';
 
 export class ProductManagementStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
