@@ -49,6 +49,8 @@ export class ProductDatabaseConstruct extends Construct {
 
     const products = productsApi.root.addResource('products');
     products.addMethod(HttpMethod.GET);
+    products.addMethod(HttpMethod.POST);
+    products.addMethod(HttpMethod.PUT);
 
     const exportName = 'ProductsAPIEndpoint';
       new cdk.CfnOutput(this, 'ProductsAPIEndpoint', {
