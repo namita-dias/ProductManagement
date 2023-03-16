@@ -43,7 +43,7 @@ export class ProductImagesConstruct extends Construct {
       
     //http API
       this.httpApi = new apigate.HttpApi(this, 'HttpApi', {
-          apiName: 'just-testing-api',
+          apiName: 'imagesApi',
           createDefaultStage: true,
           corsPreflight: {
               allowMethods: [ apigate.CorsHttpMethod.GET ],
