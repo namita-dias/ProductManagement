@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import * as s3Deploy from 'aws-cdk-lib/aws-s3-deployment';
 import path from 'path';
+import { ProductManagementConstruct } from './api';
 
 export class ProductManagementStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -28,5 +29,13 @@ export class ProductManagementStack extends cdk.Stack {
       console.log(`Error coping images to bucket ${productsImagesBucket}: ${err}`);
     }
 
+    new cdk.CfnOutput(this, 'Product-Image-Bucket-Name', {
+      value: productsImagesBucket.bucketName,
+      exportName: 'Product-Image-Bucket-Name'
+    })
+
+    const api = new ProductManagementConstruct(this, 'ProductManagementAPI', {
+      bucket: productsImagesBucket
+    })
   }
 }
