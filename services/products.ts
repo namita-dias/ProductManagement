@@ -76,7 +76,7 @@ const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult
             Name: inputProduct.Name,
             Image: inputProduct.Image,
             Price: inputProduct.Price,
-            CreateDate: inputProduct.CreateDate ?? new Date() 
+            CreateDate: inputProduct.CreateDate ?? new Date().toISOString() 
         }
 
         const productItem = {
