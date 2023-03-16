@@ -4,7 +4,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { PromiseResult } from "aws-sdk/lib/request";
 import { AWSError } from "aws-sdk/lib/error";
 import { HttpMethod } from "aws-cdk-lib/aws-events";
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 
 const productTableName = process.env.PRODUCT_TABLE_NAME;
 const docClient = new DocumentClient();
