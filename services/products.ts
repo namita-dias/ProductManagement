@@ -108,7 +108,7 @@ const getProduct = async (event: APIGatewayProxyEvent) : Promise<PromiseResult<D
 
         const query = {
             TableName: productTableName!,
-            Key: {productId}
+            Key: {ProductId: productId}
         };
 
         const product = await docClient.get(query).promise();
@@ -127,7 +127,7 @@ const deleteProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult
 
         const query = {
             TableName: productTableName!,
-            Key: {productId}
+            Key: {ProductId: productId}
         };
 
         const product = await docClient.delete(query).promise();
