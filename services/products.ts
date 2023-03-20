@@ -94,6 +94,44 @@ const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult
     return result;
 }
 
+const getProduct = async (event: APIGatewayProxyEvent) : Promise<PromiseResult<DocumentClient.GetItemOutput, AWSError> | APIGatewayProxyResult> => {
+    try {
+
+        const productId = event.pathParameters!.productId;
+
+        const query = {
+            TableName: productTableName!,
+            Key: {productId}
+        };
+
+        const product = await docClient.get(query).promise();
+        return product;
+        
+    } catch (err) {
+        console.log(err);
+        return sendFail('something went wrong when getting a product' + err);
+    }
+}
+
+const deleteProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<DocumentClient.DeleteItemOutput, AWSError> | APIGatewayProxyResult> => {
+    try {
+
+        const productId = event.pathParameters!.productId;
+
+        const query = {
+            TableName: productTableName!,
+            Key: {productId}
+        };
+
+        const product = await docClient.delete(query).promise();
+        return product;
+        
+    } catch (err) {
+        console.log(err);
+        return sendFail('something went wrong when deleting a product' + err);
+    }
+}
+
 function sendFail(message: string): APIGatewayProxyResult {
     
     return {
