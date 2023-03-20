@@ -30,6 +30,13 @@ export const productHandler = async (event: APIGatewayProxyEvent): Promise<APIGa
                     result = await upsertProduct(event);
                 break;
             }
+            case '/products/{productId}': {
+                if (httpMethod == HttpMethod.GET)
+                    result = await getProduct(event);
+                if (httpMethod == HttpMethod.DELETE)
+                    result = await deleteProduct(event);
+                break;
+            }
             default:
                 return sendFail(`unsupported route: ${route}`);
         }
