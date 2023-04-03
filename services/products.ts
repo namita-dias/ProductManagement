@@ -79,11 +79,11 @@ const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult
         const inputProduct: Product = JSON.parse(body);
 
         const product: Product = {
-            ProductId: inputProduct.ProductId ? inputProduct.ProductId : uuid(),
-            Name: inputProduct.Name,
-            Image: inputProduct.Image,
-            Price: inputProduct.Price,
-            CreateDate: inputProduct.CreateDate ?? new Date().toISOString() 
+            productId: inputProduct.productId ? inputProduct.productId : uuid(),
+            name: inputProduct.name,
+            image: inputProduct.image,
+            price: inputProduct.price,
+            createDate: inputProduct.createDate ?? new Date().toISOString() 
         }
 
         const productItem = {
