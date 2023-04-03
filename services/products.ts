@@ -1,4 +1,4 @@
-import { Product } from '../models/product';
+import { Product } from '../models/Product';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { PromiseResult } from 'aws-sdk/lib/request';
