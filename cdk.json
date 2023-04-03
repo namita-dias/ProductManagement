@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/product_management.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/productManagementApp.ts",
   "watch": {
     "include": [
       "**"
@@ -16,7 +16,7 @@
       "test"
     ]
   },
-  "requireApproval" : "never",
+  "requireApproval": "never",
   "context": {
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,

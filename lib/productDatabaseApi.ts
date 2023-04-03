@@ -13,7 +13,7 @@ export class ProductDatabaseConstruct extends Construct {
     super(scope, id);
 
       const productTable = new dynamo.Table(this, 'Product', {
-          partitionKey: { name: 'ProductId', type: dynamo.AttributeType.STRING },
+          partitionKey: { name: 'productId', type: dynamo.AttributeType.STRING },
           billingMode: dynamo.BillingMode.PAY_PER_REQUEST
       });
 
