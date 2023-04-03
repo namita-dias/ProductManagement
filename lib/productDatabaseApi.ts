@@ -2,18 +2,14 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as dynamo from 'aws-cdk-lib/aws-dynamodb';
 import * as lambda from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Handler, IFunction, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import * as path from 'path';
-import * as apigate from 'aws-cdk-lib/aws-apigateway';
+import * as apiGate from 'aws-cdk-lib/aws-apigateway';
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
 
 
-export interface ProductDatabaseProps {
-
-}
-
 export class ProductDatabaseConstruct extends Construct {
-  constructor(scope: Construct, id: string, props?: ProductDatabaseProps) {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
 
       const productTable = new dynamo.Table(this, 'Product', {
@@ -41,7 +37,7 @@ export class ProductDatabaseConstruct extends Construct {
 
     productTable.grantReadWriteData(manageProducts);
 
-    const productsApi = new apigate.LambdaRestApi(this, 'ProductsApi', {
+    const productsApi = new apiGate.LambdaRestApi(this, 'ProductsApi', {
       handler: manageProducts,
       proxy: false,
       cloudWatchRole: true
@@ -55,11 +51,5 @@ export class ProductDatabaseConstruct extends Construct {
     const product = products.addResource('{productId}');
     product.addMethod(HttpMethod.GET);
     product.addMethod(HttpMethod.DELETE);
-
-    const exportName = 'ProductsAPIEndpoint';
-      new cdk.CfnOutput(this, 'ProductsAPIEndpoint', {
-          value: productsApi.url!,
-          exportName: exportName
-      });
   }
 }

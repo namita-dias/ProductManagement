@@ -1,4 +1,4 @@
-import { Product } from "../models/Product";
+import { Product } from "../models/product";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { PromiseResult } from "aws-sdk/lib/request";
@@ -6,8 +6,8 @@ import { AWSError } from "aws-sdk/lib/error";
 import { HttpMethod } from "aws-cdk-lib/aws-events";
 import { v4 as uuid } from "uuid";
 
-const productTableName = process.env.PRODUCT_TABLE_NAME;
-const docClient = new DocumentClient();
+let productTableName: string | undefined;
+let docClient: DocumentClient;
 
 export const productHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
@@ -18,9 +18,8 @@ export const productHandler = async (event: APIGatewayProxyEvent): Promise<APIGa
         let httpMethod = event.httpMethod;
         let route = httpMethod.concat(resource);
 
-        console.log(`http method: ${httpMethod}`);
-        console.log(`resource: ${resource}`);
-        console.log(`route: ${route}`);
+        productTableName = process.env.PRODUCT_TABLE_NAME;
+        docClient = new DocumentClient();
 
         switch (resource) {
             case '/products': {
@@ -79,11 +78,10 @@ const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult
         const inputProduct: Product = JSON.parse(body);
 
         const product: Product = {
-            ProductId: inputProduct.ProductId ? inputProduct.ProductId : uuid(),
-            Name: inputProduct.Name,
-            Image: inputProduct.Image,
-            Price: inputProduct.Price,
-            CreateDate: inputProduct.CreateDate ?? new Date().toISOString() 
+            productId: inputProduct.productId ? inputProduct.productId : uuid(),
+            name: inputProduct.name,
+            price: inputProduct.price,
+            createDate: inputProduct.createDate ?? new Date().toISOString() 
         }
 
         const productItem = {

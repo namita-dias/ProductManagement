@@ -1,7 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import path from 'path';
-import { ProductDatabaseConstruct } from './databaseApi';
+import { ProductDatabaseConstruct } from './productDatabaseApi';
 
 export class ProductManagementStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
