@@ -1,4 +1,4 @@
-import { Product } from '../models/Product';
+import { Product } from '../models/product';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { PromiseResult } from 'aws-sdk/lib/request';
@@ -10,10 +10,8 @@ let productTableName: string | undefined;
 let docClient: DocumentClient;
 
 export const productHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  
   let result;
   try {
-
     let resource = event.resource;
     let httpMethod = event.httpMethod;
     let route = httpMethod.concat(resource);
@@ -23,53 +21,45 @@ export const productHandler = async (event: APIGatewayProxyEvent): Promise<APIGa
 
     switch (resource) {
       case '/products': {
-        if (httpMethod == HttpMethod.GET)
-          result = await getProducts();
-        if (httpMethod == HttpMethod.POST || httpMethod == HttpMethod.PUT)
-          result = await upsertProduct(event);
+        if (httpMethod == HttpMethod.GET) result = await getProducts();
+        if (httpMethod == HttpMethod.POST || httpMethod == HttpMethod.PUT) result = await upsertProduct(event);
         break;
       }
       case '/products/{productId}': {
-        if (httpMethod == HttpMethod.GET)
-          result = await getProduct(event);
-        if (httpMethod == HttpMethod.DELETE)
-          result = await deleteProduct(event);
+        if (httpMethod == HttpMethod.GET) result = await getProduct(event);
+        if (httpMethod == HttpMethod.DELETE) result = await deleteProduct(event);
         break;
       }
       default:
         return sendFail(`unsupported route: ${route}`);
     }
-
   } catch (err) {
     console.log(err);
     return sendFail('something went wrong' + err);
   }
   return {
     statusCode: 200,
-    body: JSON.stringify({ result })
-  }
-}
+    body: JSON.stringify({ result }),
+  };
+};
 
 const getProducts = async (): Promise<PromiseResult<DocumentClient.ScanOutput, AWSError> | APIGatewayProxyResult> => {
   try {
-    
     const productTable = {
-      TableName: productTableName!
+      TableName: productTableName!,
     };
 
     const products = await docClient.scan(productTable).promise();
     return products;
-
   } catch (err) {
     console.log(err);
     return sendFail('something went wrong when loading employee table' + err);
   }
-}
+};
 
 const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError> | APIGatewayProxyResult> => {
   let result;
   try {
-    
     const { body } = event;
     if (!body) {
       return sendFail('invalid request');
@@ -136,5 +126,5 @@ function sendFail(message: string): APIGatewayProxyResult {
   return {
     statusCode: 400,
     body: JSON.stringify({ message }),
-  }
+  };
 }
