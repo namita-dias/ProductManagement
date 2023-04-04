@@ -24,7 +24,7 @@ export class ProductManagementStack extends cdk.Stack {
 
     const manageProducts = new lambda.NodejsFunction(this, 'ManageProducts', {
       runtime: Runtime.NODEJS_16_X,
-      entry: path.join(__dirname, '..', 'implementation', 'products.ts'),
+      entry: path.join(__dirname, '..', 'implementation', 'product-lambda-handler-crud.ts'),
       handler: 'productHandler',
       bundling: {
         externalModules: ['aws-sdk'],
