@@ -1,4 +1,4 @@
-import * as products from '../../implementation/products';
+import * as products from '../../implementation/product-lambda-handler-crud';
 
 describe('Testing the operations on products', () => {
   test('sendFail - it should display route error when route not resolved', async () => {
