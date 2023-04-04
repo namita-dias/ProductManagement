@@ -98,7 +98,12 @@ const getProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<Do
     };
 
     const product = await docClient.get(query).promise();
-    return product;
+
+    if (product.Item == null || product.Item == undefined) {
+      return sendFail('Could not find product. Please specify the correct ProductId.');
+    } else {
+      return product;
+    }
   } catch (err) {
     console.log(err);
     return sendFail('something went wrong when getting a product' + err);
