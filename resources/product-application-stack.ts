@@ -3,36 +3,35 @@ import { Construct } from 'constructs';
 import * as dynamo from 'aws-cdk-lib/aws-dynamodb';
 import * as lambda from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
-import * as path from 'path';
 import * as apiGate from 'aws-cdk-lib/aws-apigateway';
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
+import * as path from 'path';
 
+export class ProductManagementStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
 
-export class ProductDatabaseConstruct extends Construct {
-  constructor(scope: Construct, id: string) {
-    super(scope, id);
+    const productTable = new dynamo.Table(this, 'Product', {
+      partitionKey: { name: 'productId', type: dynamo.AttributeType.STRING },
+      billingMode: dynamo.BillingMode.PAY_PER_REQUEST,
+    });
 
-      const productTable = new dynamo.Table(this, 'Product', {
-          partitionKey: { name: 'productId', type: dynamo.AttributeType.STRING },
-          billingMode: dynamo.BillingMode.PAY_PER_REQUEST
-      });
+    const productTableName = productTable.tableName;
+    new cdk.CfnOutput(this, 'ProductTableName', {
+      value: productTableName,
+      exportName: 'ProductTableName',
+    });
 
-      const productTableName = productTable.tableName;
-      new cdk.CfnOutput(this, "ProductTableName", {
-          value: productTableName,
-          exportName: "ProductTableName"
-      });
-    
     const manageProducts = new lambda.NodejsFunction(this, 'ManageProducts', {
       runtime: Runtime.NODEJS_16_X,
       entry: path.join(__dirname, '..', 'services', 'products.ts'),
       handler: 'productHandler',
       bundling: {
-        externalModules: ['aws-sdk']
+        externalModules: ['aws-sdk'],
       },
       environment: {
-        PRODUCT_TABLE_NAME: productTableName
-      }
+        PRODUCT_TABLE_NAME: productTableName,
+      },
     });
 
     productTable.grantReadWriteData(manageProducts);
@@ -40,7 +39,7 @@ export class ProductDatabaseConstruct extends Construct {
     const productsApi = new apiGate.LambdaRestApi(this, 'ProductsApi', {
       handler: manageProducts,
       proxy: false,
-      cloudWatchRole: true
+      cloudWatchRole: true,
     });
 
     const products = productsApi.root.addResource('products');
