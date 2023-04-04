@@ -1,4 +1,4 @@
-import { Product } from '../types/product';
+import { Product } from './product';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { PromiseResult } from 'aws-sdk/lib/request';
@@ -12,9 +12,9 @@ let docClient: DocumentClient;
 export const productHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   let result;
   try {
-    let resource = event.resource;
-    let httpMethod = event.httpMethod;
-    let route = httpMethod.concat(resource);
+    const resource = event.resource;
+    const httpMethod = event.httpMethod;
+    const route = httpMethod.concat(resource);
 
     productTableName = process.env.PRODUCT_TABLE_NAME;
     docClient = new DocumentClient();
@@ -58,7 +58,6 @@ const getProducts = async (): Promise<PromiseResult<DocumentClient.ScanOutput, A
 };
 
 const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError> | APIGatewayProxyResult> => {
-  let result;
   try {
     const { body } = event;
     if (!body) {
@@ -79,13 +78,12 @@ const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult
       TableName: productTableName!,
     };
 
-    result = await docClient.put(productItem).promise();
+    const result = await docClient.put(productItem).promise();
+    return result;
   } catch (err) {
     console.log(err);
     return sendFail('something went wrong when upserting product table' + err);
   }
-
-  return result;
 };
 
 const getProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<DocumentClient.GetItemOutput, AWSError> | APIGatewayProxyResult> => {
