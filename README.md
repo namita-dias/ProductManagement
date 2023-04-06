@@ -5,7 +5,7 @@ This is a simple app that performs CRUD opeartions on the DynamoDB table via a A
 
 2. Add products:
    https://g3e5dthht4.execute-api.eu-west-2.amazonaws.com/prod/products
-   \n Eg:
+   Eg:
       ```
       {
          "name" : "Product F",
@@ -18,7 +18,7 @@ This is a simple app that performs CRUD opeartions on the DynamoDB table via a A
 
 4. Update product:
    https://g3e5dthht4.execute-api.eu-west-2.amazonaws.com/prod/products
-   \n Eg:
+   Eg:
       ```
       {
          "createDate": "2023-04-04T12:19:57.186Z",
