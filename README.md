@@ -2,6 +2,7 @@ This is a simple app that performs CRUD opeartions on the DynamoDB table via a A
 
  1. List all products:
    https://g3e5dthht4.execute-api.eu-west-2.amazonaws.com/prod/products
+   
 
 2. Add products:
    https://g3e5dthht4.execute-api.eu-west-2.amazonaws.com/prod/products
@@ -13,9 +14,12 @@ This is a simple app that performs CRUD opeartions on the DynamoDB table via a A
          "price" : "60.00"
       }
       ```
+      
 
 3. Details of one product:
    https://g3e5dthht4.execute-api.eu-west-2.amazonaws.com/prod/products/{producId}
+   
+   
 
 4. Update product:
    https://g3e5dthht4.execute-api.eu-west-2.amazonaws.com/prod/products
