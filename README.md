@@ -5,6 +5,7 @@ This is a simple app that performs CRUD opeartions on the DynamoDB table via a A
 
 2. Add products:
    https://g3e5dthht4.execute-api.eu-west-2.amazonaws.com/prod/products
+   
    Eg:
       ```
       {
@@ -18,6 +19,7 @@ This is a simple app that performs CRUD opeartions on the DynamoDB table via a A
 
 4. Update product:
    https://g3e5dthht4.execute-api.eu-west-2.amazonaws.com/prod/products
+   
    Eg:
       ```
       {
