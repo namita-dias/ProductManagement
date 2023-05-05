@@ -1,8 +1,6 @@
 import { Product } from './product';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { PromiseResult } from 'aws-sdk/lib/request';
-import { AWSError } from 'aws-sdk/lib/error';
 import { v4 as uuid } from 'uuid';
 
 export const getProductsHandler = async (): Promise<APIGatewayProxyResult> => {
