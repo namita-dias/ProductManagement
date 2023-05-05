@@ -3,65 +3,33 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { AWSError } from 'aws-sdk/lib/error';
-import { HttpMethod } from 'aws-cdk-lib/aws-events';
 import { v4 as uuid } from 'uuid';
 
-let productTableName: string | undefined;
-let docClient: DocumentClient;
+export const getProductsHandler = async (): Promise<APIGatewayProxyResult> => {
+  const productTableName = process.env.PRODUCT_TABLE_NAME;
+  const docClient = new DocumentClient();
 
-export const productHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  let result;
-  try {
-    const resource = event.resource;
-    const httpMethod = event.httpMethod;
-    const route = httpMethod.concat(resource);
-
-    productTableName = process.env.PRODUCT_TABLE_NAME;
-    docClient = new DocumentClient();
-
-    switch (resource) {
-      case '/products': {
-        if (httpMethod == HttpMethod.GET) result = await getProducts();
-        if (httpMethod == HttpMethod.POST || httpMethod == HttpMethod.PUT) result = await upsertProduct(event);
-        break;
-      }
-      case '/products/{productId}': {
-        if (httpMethod == HttpMethod.GET) result = await getProduct(event);
-        if (httpMethod == HttpMethod.DELETE) result = await deleteProduct(event);
-        break;
-      }
-      default:
-        return sendFail(`unsupported route: ${route}`);
-    }
-  } catch (err) {
-    console.log(err);
-    return sendFail('something went wrong' + err);
-  }
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ result }),
-  };
-};
-
-const getProducts = async (): Promise<PromiseResult<DocumentClient.ScanOutput, AWSError> | APIGatewayProxyResult> => {
   try {
     const productTable = {
       TableName: productTableName!,
     };
 
     const products = await docClient.scan(productTable).promise();
-    return products;
+    if (products != null) return sendResult(true, products);
+    else return sendResult(false, 'no products found');
   } catch (err) {
     console.log(err);
-    return sendFail('something went wrong when loading employee table' + err);
+    return sendResult(false, 'something went wrong when loading employee table' + err);
   }
 };
 
-const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError> | APIGatewayProxyResult> => {
+export const upsertProductHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  const productTableName = process.env.PRODUCT_TABLE_NAME;
+  const docClient = new DocumentClient();
   try {
     const { body } = event;
     if (!body) {
-      return sendFail('invalid request');
+      return sendResult(false, 'invalid request');
     }
 
     const inputProduct: Product = JSON.parse(body);
@@ -79,14 +47,17 @@ const upsertProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult
     };
 
     const result = await docClient.put(productItem).promise();
-    return result;
+    if (result != null) return sendResult(true, result);
+    else return sendResult(false, inputProduct.productId ? 'Product not updated' : 'Product not added');
   } catch (err) {
     console.log(err);
-    return sendFail('something went wrong when upserting product table' + err);
+    return sendResult(false, 'something went wrong when upserting product table' + err);
   }
 };
 
-const getProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<DocumentClient.GetItemOutput, AWSError> | APIGatewayProxyResult> => {
+export const getProductHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  const productTableName = process.env.PRODUCT_TABLE_NAME;
+  const docClient = new DocumentClient();
   try {
     const productId = event.pathParameters!.productId;
 
@@ -94,21 +65,19 @@ const getProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<Do
       TableName: productTableName!,
       Key: { productId: productId },
     };
-
     const product = await docClient.get(query).promise();
 
-    if (product.Item == null || product.Item == undefined) {
-      return sendFail('Could not find product. Please specify the correct ProductId.');
-    } else {
-      return product;
-    }
+    if (product.Item == null || product.Item == undefined) return sendResult(false, 'Could not find product. Please specify the correct ProductId.');
+    else return sendResult(true, product);
   } catch (err) {
     console.log(err);
-    return sendFail('something went wrong when getting a product' + err);
+    return sendResult(false, 'something went wrong when getting a product' + err);
   }
 };
 
-const deleteProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult<DocumentClient.DeleteItemOutput, AWSError> | APIGatewayProxyResult> => {
+export const deleteProductHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  const productTableName = process.env.PRODUCT_TABLE_NAME;
+  const docClient = new DocumentClient();
   try {
     const productId = event.pathParameters!.productId;
 
@@ -118,16 +87,24 @@ const deleteProduct = async (event: APIGatewayProxyEvent): Promise<PromiseResult
     };
 
     const product = await docClient.delete(query).promise();
-    return product;
+    if (product != null) return sendResult(true, product);
+    else return sendResult(false, 'Product not found');
   } catch (err) {
     console.log(err);
-    return sendFail('something went wrong when deleting a product' + err);
+    return sendResult(false, 'something went wrong when deleting a product' + err);
   }
 };
 
-function sendFail(message: string): APIGatewayProxyResult {
-  return {
-    statusCode: 400,
-    body: JSON.stringify({ message }),
-  };
+function sendResult(isSuccess: boolean, message: any): APIGatewayProxyResult {
+  if (isSuccess) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message }),
+    };
+  } else {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message }),
+    };
+  }
 }
